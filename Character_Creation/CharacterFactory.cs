@@ -7,15 +7,27 @@ using System.Threading.Tasks;
 
 namespace BeatEmUpGame.Character_Creation
 {
+    /// <summary>
+    /// Factory class responsible for creating and storing all available characters.
+    /// </summary>
     public class CharacterFactory
     {
+        /// <summary>
+        /// Internal list holding all character definitions.
+        /// </summary>
         private readonly List<Character> characters = new();
 
+        /// <summary>
+        /// Initializes the factory and pre-loads all characters.
+        /// </summary>
         public CharacterFactory()
         {
             InitializeCharacters();
         }
 
+        /// <summary>
+        /// Adds a new character to the list and applies race bonuses.
+        /// </summary>
         public void AddCharacterToList(Character character)
         {
             if (character != null)
@@ -25,11 +37,18 @@ namespace BeatEmUpGame.Character_Creation
             }
         }
 
+        /// <summary>
+        /// Returns all available characters as a list.
+        /// </summary>
         public List<Character> GetAllCharacters()
         {
             return characters;
         }
 
+        /// <summary>
+        /// Returns a character by its ID, or throws if not found.
+        /// </summary>
+        /// <param name="id">Character ID to search for.</param>
         public Character GetCharacterById(int id)
         {
             foreach (var character in characters)
@@ -43,53 +62,57 @@ namespace BeatEmUpGame.Character_Creation
             throw new InvalidOperationException($"No character found with ID {id}.");
         }
 
+        /// <summary>
+        /// Initializes and adds all predefined characters to the game.
+        /// </summary>
         public void InitializeCharacters()
         {
+            // Adds a human fighter
             AddCharacterToList(new Character
             {
                 ID = 1,
                 Name = "Akira",
                 Race = "Human",
                 HP = 130,
-                AttackPower = 20,
+                AttackPower = 18,
                 Defense = 7,
-                Speed = 6,
-                CriticalChance = 80,
-                SpecialMeter = 10,
-                Potion = 0,
-                RaceCharacteristic = new Human()
+                CriticalChance = 20,
+                Medikit = 0,
+                RaceCharacteristic = new Human(),
+                ConsoleColor = ConsoleColor.Blue,
             });
 
+            // Adds a samurai fighter
             AddCharacterToList(new Character
             {
                 ID = 2,
                 Name = "Gruumsh",
                 Race = "Samurai",
                 HP = 115,
-                AttackPower = 15,
+                AttackPower = 20,
                 Defense = 7,
-                Speed = 7,
-                CriticalChance = 80,
-                SpecialMeter = 10,
-                Potion = 1,
-                RaceCharacteristic = new Samurai()
+                CriticalChance = 30,
+                Medikit = 1,
+                RaceCharacteristic = new Samurai(),
+                ConsoleColor = ConsoleColor.Cyan
             });
 
+            // Adds a ninja fighter
             AddCharacterToList(new Character
             {
                 ID = 3,
                 Name = "Elowen",
                 Race = "Ninja",
                 HP = 140,
-                AttackPower = 23,
+                AttackPower = 15,
                 Defense = 12,
-                Speed = 4,
-                CriticalChance = 20,
-                SpecialMeter = 0,
-                Potion = 0,
-                RaceCharacteristic = new Ninja()
+                CriticalChance = 25,
+                Medikit = 0,
+                RaceCharacteristic = new Ninja(),
+                ConsoleColor = ConsoleColor.DarkGreen
             });
 
+            // Adds an android fighter
             AddCharacterToList(new Character
             {
                 ID = 4,
@@ -97,12 +120,11 @@ namespace BeatEmUpGame.Character_Creation
                 Race = "Android",
                 HP = 125,
                 AttackPower = 17,
-                Defense = 4,
-                Speed = 5,
-                CriticalChance = 20,
-                SpecialMeter = 0,
-                Potion = 1,
-                RaceCharacteristic = new Android()
+                Defense = 10,
+                CriticalChance = 30,
+                Medikit = 1,
+                RaceCharacteristic = new Android(),
+                ConsoleColor = ConsoleColor.Yellow
             });
         }
     }

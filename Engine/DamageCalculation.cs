@@ -1,4 +1,5 @@
 ﻿using BeatEmUpGame.Character_Creation;
+using BeatEmUpGame.Presentation_UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,16 +9,20 @@ using System.Transactions;
 
 namespace BeatEmUpGame.Engine
 {
+    /// <summary>
+    /// Contains logic for calculating damage, rage mode, and critical hits.
+    /// </summary>
     public class DamageCalculation
     {
-        private Character character = new Character();
-
-        // Calculates DamageFactor based on the Number of the Dice
+        /// <summary>
+        /// Returns a damage factor multiplier based on the dice roll.
+        /// </summary>
+        /// <param name="rolledDice">A number between 1 and 20</param>
+        /// <returns>Damage multiplier (0.0 to 1.25)</returns>
         public double DamageFactor(int rolledDice)
         {
             if (rolledDice < 1 || rolledDice > 20)
-                throw new ArgumentOutOfRangeException(nameof(rolledDice),
-                    "Dice roll must be between 1 and 20.");
+                throw new ArgumentOutOfRangeException(nameof(rolledDice), "Dice roll must be between 1 and 20.");
 
             return rolledDice switch
             {
@@ -28,69 +33,73 @@ namespace BeatEmUpGame.Engine
             };
         }
 
+        /// <summary>
+        /// Calculates base attack value from attack power and damage factor.
+        /// </summary>
+        /// <param name="characterAttackPower">Character's base attack stat</param>
+        /// <param name="damageFactor">Multiplier returned by DamageFactor()</param>
         public double CalculateBaseAttack(int characterAttackPower, double damageFactor)
         {
-            var totalAttackPower = characterAttackPower * damageFactor;
-            return totalAttackPower;
+            return characterAttackPower * damageFactor;
         }
 
-        // Rage Mode. If Healthpoints go down to 25 or under
+        /// <summary>
+        /// Returns true if rage mode is active (HP <= 35).
+        /// </summary>
+        /// <param name="healthPointsDefender">The player's remaining HP</param>
         public bool RageMode(double healthPointsDefender)
         {
-            if (healthPointsDefender <= 25)
-            {
-                Console.WriteLine("Rage Mode is active!");
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return healthPointsDefender <= 35;
         }
 
-        // Calculating CritcalChance of Attack.
-        public double CalculateCriticalChance(double baseAttack, int criticalChanceStat, int dice, bool rageMode)
+        /// <summary>
+        /// Calculates total attack power, factoring in critical chance and rage mode.
+        /// </summary>
+        /// <param name="baseAttack">Attack value before critical calculation</param>
+        /// <param name="criticalChanceStat">Critical chance %</param>
+        /// <param name="dice">Rolled value for critical chance</param>
+        /// <param name="rageMode">Whether rage mode is active</param>
+        public double CalculateCriticalChanceAttack(double baseAttack, int criticalChanceStat, int dice, bool rageMode)
         {
-            double totalattack = 0;
-
-            // If rageMode is true. Critical Chance stat *2
+            // Rage mode doubles the critical chance stat
             if (rageMode)
             {
-                criticalChanceStat = criticalChanceStat * 2;
-            }
-            else if (dice <= criticalChanceStat)
-            {
-                totalattack = baseAttack * 2;
-            }
-            else
-            {
-                totalattack = baseAttack;
+                criticalChanceStat *= 2;
             }
 
-            return totalattack;
+            // If the rolled dice is within the critical chance, attack is doubled
+            return dice <= criticalChanceStat ? baseAttack * 2 : baseAttack;
         }
 
-        // Calculates Base Attack & Critical Chance attack combined
-        public double CalculateTotalattack(double totalAttack, int defenseDefender)
+        /// <summary>
+        /// Calculates total damage after subtracting the defender's defense.
+        /// </summary>
+        /// <param name="totalAttack">Attack power after critical chance</param>
+        /// <param name="defenseDefender">Defense stat of the opponent</param>
+        public double CalculateTotalDamage(double totalAttack, int defenseDefender)
         {
-            var damageTotal = totalAttack - defenseDefender;
-            if (damageTotal < 0)
-            {
-                damageTotal = 0;
-            }
+            double damageTotal = totalAttack - defenseDefender;
 
-            return damageTotal;
+            // Damage can't go below 0
+            return Math.Max(damageTotal, 0);
         }
 
+        /// <summary>
+        /// Performs a complete damage calculation: base → critical → total.
+        /// </summary>
+        /// <param name="character1">Attacker</param>
+        /// <param name="character2">Defender</param>
+        /// <param name="gameDice">Game dice roll (1–20)</param>
+        /// <param name="criticalChanceDice">Critical hit roll (1–100)</param>
+        /// <param name="healthLeft">Attacker's remaining HP (used for rage mode)</param>
+        /// <returns>Final damage to apply</returns>
         public double CalculateFinalDamage(Character character1, Character character2, int gameDice, int criticalChanceDice, double healthLeft)
         {
             var damageFactor = DamageFactor(gameDice);
             var baseAttack = CalculateBaseAttack(character1.AttackPower, damageFactor);
             bool rageMode = RageMode(healthLeft);
-            var totalAttack = CalculateCriticalChance(baseAttack, character1.CriticalChance, criticalChanceDice, rageMode);
-            var finaleDamage = CalculateTotalattack(totalAttack, character2.Defense);
-
-            return finaleDamage;
+            var totalAttack = CalculateCriticalChanceAttack(baseAttack, character1.CriticalChance, criticalChanceDice, rageMode);
+            return CalculateTotalDamage(totalAttack, character2.Defense);
         }
     }
 }

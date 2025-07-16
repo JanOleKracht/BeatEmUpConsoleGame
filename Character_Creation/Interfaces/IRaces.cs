@@ -14,12 +14,8 @@ namespace BeatEmUpGame.Character_Creation.Interfaces
 
         int GetDefenseBonus();
 
-        int GetSpeedBonus();
-
         int GetCriticalChanceBonus();
 
-        int GetSpecialMeterBonus();
-
-        int GetPotionBonus();
+        int GetMediKitBonus();
     }
 }

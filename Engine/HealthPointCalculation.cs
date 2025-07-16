@@ -6,49 +6,41 @@ using System.Threading.Tasks;
 
 namespace BeatEmUpGame.Engine
 {
+    /// <summary>
+    /// Provides methods to handle character health changes,
+    /// such as applying damage and healing from medikits.
+    /// </summary>
     public class HealthPointCalculation
     {
-        // Calculation for Health after Attack has benn calculated
-        public double HealthCalculation(double damage, double healthPoints)
+        /// <summary>
+        /// Calculates remaining health after taking damage.
+        /// </summary>
+        /// <param name="damage">Amount of damage dealt.</param>
+        /// <param name="healthPoints">Current health before damage.</param>
+        /// <returns>New health after damage is subtracted.</returns>
+        public static double HealthCalculation(double damage, double healthPoints)
         {
-            var healthLeft = healthPoints - damage;
-            return healthLeft;
+            return healthPoints - damage;
         }
 
-        //public double HealthCalculation(double attackPower, int defense, double healthPoints)
-        //{
-        //    var damage = attackPower - defense;
-        //    if (damage <= 0)
-        //    {
-        //        damage = 0;
-        //    }
-        //    var healthLeft = healthPoints - damage;
-        //    return healthLeft;
-        //}
-
-        // Restores 50 Health Points when used
+        /// <summary>
+        /// Restores health based on medikit dice result.
+        /// </summary>
+        /// <param name="healthpoints">Current health before healing.</param>
+        /// <param name="rolledDice">Dice result from medikit roll (1–20).</param>
+        /// <returns>Updated health after applying healing bonus.</returns>
         public double UseMedikit(double healthpoints, int rolledDice)
         {
-            double newHealthPoints = 0;
+            int healAmount = rolledDice switch
+            {
+                <= 5 => 20,
+                <= 10 => 30,
+                <= 15 => 40,
+                _ => 50
+            };
 
-            if (rolledDice <= 5)
-            {
-                newHealthPoints = healthpoints + 20;
-            }
-            else if (rolledDice <= 10)
-            {
-                newHealthPoints = healthpoints + 30;
-            }
-            else if (rolledDice <= 15)
-            {
-                newHealthPoints = healthpoints + 40;
-            }
-            else if (rolledDice <= 20)
-            {
-                newHealthPoints = healthpoints + 50;
-            }
-
-            return newHealthPoints;
+            Console.WriteLine($"You rolled a {rolledDice}. Plus {healAmount} Healthpoints");
+            return healthpoints + healAmount;
         }
     }
 }
