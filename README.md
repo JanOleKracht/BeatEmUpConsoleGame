@@ -134,7 +134,7 @@ See the [`LICENSE`](LICENSE) file for details.
 
 ---
 
-## 👨‍💻 Author
+## 👨‍💻 Developer
 
 **Jan-Ole Kracht**  
 > This project was created to practice and improve object-oriented programming skills using C#, including interfaces and dependency injection.
