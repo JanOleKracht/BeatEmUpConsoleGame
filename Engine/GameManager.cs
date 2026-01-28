@@ -14,7 +14,7 @@ namespace BeatEmUpGame.Engine
     /// Manages the core gameplay flow, including character selection, turn logic,
     /// damage calculations, and win conditions.
     /// </summary>
-    public class GameManager : Character
+    public class GameManager
     {
         private readonly CharacterFactory characterFactory;
         private readonly DiceService diceService;
