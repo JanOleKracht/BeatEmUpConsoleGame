@@ -117,15 +117,7 @@ dotnet run
 
 ---
 
-## 💡 Future Improvements
 
-- Add single-player mode with basic AI
-- Expand combat system with skills or special effects
-- Use persistent save files or a database
-- Build a GUI (WPF or Unity)
-- Add leveling/progression system
-
----
 
 ## 📜 License
 
